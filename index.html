@@ -92,6 +92,32 @@
   .pv-ritm .dot{width:18px;height:18px;border-radius:6px;background:#34e2b0}
   .pv-ritm .streak{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:12px;padding:8px 12px;font-size:.78rem;font-weight:600;width:75%}
 
+  /* mini preview: strata (fintech dashboard) */
+  .pv-strata{background:#eef1f3;justify-content:flex-start}
+  .pv-strata .lbl{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#5A6B78}
+  .pv-strata .kn{font-family:"Space Grotesk";font-weight:700;font-size:1.9rem;color:#0E7C7B;line-height:1;margin-top:4px}
+  .pv-strata .up{font-family:"JetBrains Mono";font-size:.68rem;color:#15A66A;margin-left:8px}
+  .pv-strata .bars{display:flex;align-items:flex-end;gap:6px;height:48px;margin-top:16px}
+  .pv-strata .bars i{flex:1;background:linear-gradient(180deg,#13a3a1,#0E7C7B);border-radius:3px 3px 0 0}
+
+  /* mini preview: kasta (store admin) */
+  .pv-kasta{background:#1B1A2E;flex-direction:row;align-items:center;gap:14px}
+  .pv-kasta .thumb{width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,#5B4BE8,#7B6CFF);flex-shrink:0;box-shadow:0 8px 20px rgba(91,75,232,.45)}
+  .pv-kasta .meta{flex:1}
+  .pv-kasta .nm{font-family:"Space Grotesk";font-weight:700;color:#fff;font-size:1.05rem}
+  .pv-kasta .row{height:6px;border-radius:4px;background:rgba(255,255,255,.14);margin-top:9px}
+  .pv-kasta .row.s{width:60%}
+  .pv-kasta .chip{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:"JetBrains Mono";font-size:.68rem;font-weight:600;color:#fff;background:#FF8A3D;padding:4px 10px;border-radius:20px}
+  .pv-kasta .price{font-family:"Space Grotesk";font-weight:700;color:#fff;font-size:1.05rem;margin-top:10px}
+
+  /* mini preview: relay (crm kanban) */
+  .pv-relay{background:#eef1f7;flex-direction:row;gap:9px;align-items:stretch;padding:18px}
+  .pv-relay .kcol{flex:1;background:#fff;border:1px solid #e2e7f0;border-radius:11px;padding:8px;display:flex;flex-direction:column;gap:7px}
+  .pv-relay .ktop{height:5px;border-radius:4px}
+  .pv-relay .kcard{background:#f7f8fa;border:1px solid #eef1f4;border-radius:7px;padding:7px 8px;border-left:2.5px solid #2D5BE3}
+  .pv-relay .kcard .l1{height:5px;width:80%;border-radius:3px;background:#cfd6e6}
+  .pv-relay .kcard .l2{height:5px;width:50%;border-radius:3px;background:#e2e7f0;margin-top:5px}
+
   .card-body{padding:22px 22px 26px;flex:1;display:flex;flex-direction:column}
   .card-type{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--accent);letter-spacing:.04em;margin-bottom:8px}
   .card h3{font-size:1.35rem;font-weight:700;margin-bottom:8px}
@@ -146,6 +172,7 @@
     <div class="nav-name">semyon<b>.</b>kaleda</div>
     <nav><ul>
       <li><a href="#work">Работы</a></li>
+      <li><a href="#apps">Приложения</a></li>
       <li><a href="#about">Услуги</a></li>
       <li><a href="#contact" class="cta">Связаться</a></li>
     </ul></nav>
@@ -157,7 +184,7 @@
     <div class="status"><span class="blip"></span>открыт для заказов · фриланс</div>
     <h1>Semyon Kaleda<span class="l2">веб-разработчик</span></h1>
     <div class="hero-row">
-      <p>Делаю <b>сайты под ключ</b>: лендинги, интернет-магазины и визитки. Адаптивная вёрстка, чистый код, аккуратный результат — от идеи до публикации.</p>
+      <p>Делаю <b>сайты и веб-приложения под ключ</b>: лендинги, интернет-магазины, визитки, а ещё интерактивные интерфейсы на React — дашборды, админки, CRM. Адаптивная вёрстка, чистый код, аккуратный результат.</p>
       <div class="hero-actions">
         <a href="#work" class="btn btn-primary">Посмотреть работы</a>
         <a href="#contact" class="btn btn-ghost">Написать мне</a>
@@ -228,6 +255,66 @@
   </div>
 </section>
 
+<section id="apps">
+  <div class="wrap">
+    <div class="proj-head reveal">
+      <div>
+        <div class="sec-label">интерактивные приложения</div>
+        <h2 class="sec-title">Не просто сайты — рабочие приложения</h2>
+      </div>
+      <p>SPA на React: роутинг между вкладками, состояние, CRUD и графики. Данные живут в браузере — демо можно потыкать.</p>
+    </div>
+    <div class="cards">
+      <a href="./strata/" class="card reveal">
+        <div class="preview pv-strata">
+          <div class="lbl">баланс<span class="up">▲ 12.4%</span></div>
+          <div class="kn">$284,910</div>
+          <div class="bars"><i style="height:46%"></i><i style="height:62%"></i><i style="height:54%"></i><i style="height:78%"></i><i style="height:68%"></i><i style="height:92%"></i></div>
+        </div>
+        <div class="card-body">
+          <div class="card-type">дашборд · аналитика</div>
+          <h3>Strata</h3>
+          <p>Финансовая панель: 5 вкладок с роутингом, графики на чистом SVG, поиск и фильтры, добавление и удаление транзакций.</p>
+          <div class="card-tags"><span>React</span><span>SPA</span><span>SVG-графики</span></div>
+          <div class="card-go">Открыть приложение →</div>
+        </div>
+      </a>
+      <a href="./kasta/" class="card reveal">
+        <div class="preview pv-kasta">
+          <div class="thumb"></div>
+          <div class="meta">
+            <div class="nm">Kasta</div>
+            <div class="row"></div><div class="row s"></div>
+            <div class="price">$129.00</div>
+            <span class="chip">7 в наличии</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-type">админка магазина</div>
+          <h3>Kasta</h3>
+          <p>Управление e-commerce: товары и остатки, заказы со статусами и карточкой заказа, клиенты, CRUD и сохранение данных.</p>
+          <div class="card-tags"><span>React</span><span>CRUD</span><span>localStorage</span></div>
+          <div class="card-go">Открыть приложение →</div>
+        </div>
+      </a>
+      <a href="./relay/" class="card reveal">
+        <div class="preview pv-relay">
+          <div class="kcol"><div class="ktop" style="background:#7A8794"></div><div class="kcard" style="border-left-color:#7A8794"><div class="l1"></div><div class="l2"></div></div></div>
+          <div class="kcol"><div class="ktop" style="background:#2D5BE3"></div><div class="kcard"><div class="l1"></div><div class="l2"></div></div><div class="kcard"><div class="l1"></div><div class="l2"></div></div></div>
+          <div class="kcol"><div class="ktop" style="background:#12A266"></div><div class="kcard" style="border-left-color:#12A266"><div class="l1"></div><div class="l2"></div></div></div>
+        </div>
+        <div class="card-body">
+          <div class="card-type">CRM · продажи</div>
+          <h3>Relay</h3>
+          <p>Воронка продаж с drag-and-drop по этапам, контакты из сделок, лента активности, отчёты и прогноз выручки.</p>
+          <div class="card-tags"><span>React</span><span>drag-and-drop</span><span>канбан</span></div>
+          <div class="card-go">Открыть приложение →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
 <section class="about" id="about">
   <div class="wrap">
     <div class="about-grid">
@@ -240,6 +327,7 @@
         <li><span class="serv-n">02</span><div><b>Интернет-магазины</b><small>Каталог, карточки товаров, корзина — витрина, готовая к продажам.</small></div></li>
         <li><span class="serv-n">03</span><div><b>Сайты-визитки</b><small>Компактные сайты для бизнеса и специалистов: услуги, портфолио, контакты.</small></div></li>
         <li><span class="serv-n">04</span><div><b>Вёрстка по макету</b><small>Превращу ваш дизайн из Figma в аккуратную адаптивную страницу.</small></div></li>
+        <li><span class="serv-n">05</span><div><b>Веб-приложения</b><small>Интерактивные интерфейсы на React: дашборды, админки, CRM с роутингом и состоянием.</small></div></li>
       </ul>
     </div>
   </div>
