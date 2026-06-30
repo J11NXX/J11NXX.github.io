@@ -1,276 +1,638 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semyon Kaleda — веб-разработчик</title>
-<meta name="description" content="Фриланс-разработчик сайтов: лендинги, интернет-магазины, сайты-визитки. Адаптивная вёрстка, чистый код.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kasta — Store Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
 <style>
   :root{
-    --paper:#faf9f6;
-    --ink:#14151a;
-    --ink-soft:#5d5f68;
-    --line:#e6e4dd;
-    --accent:#2f5bea;
-    --accent-ink:#1a3aa8;
-    --card:#ffffff;
+    --ink:#1B1A2E; --ink-2:#26243B; --sl:rgba(255,255,255,.09); --sl-txt:rgba(255,255,255,.62);
+    --canvas:#F5F4F9; --surface:#FFFFFF; --surface-2:#F8F7FB;
+    --text:#1A1726; --muted:#6B6880; --faint:#9B98AD;
+    --line:#ECEAF1; --line-2:#F2F1F6;
+    --primary:#5B4BE8; --primary-d:#4A3BD6; --primary-soft:#ECE9FD;
+    --accent:#FF8A3D;
+    --positive:#15A66A; --positive-soft:#E2F4EC;
+    --negative:#E2574C; --negative-soft:#FBE7E5;
+    --warning:#E89A2E; --warning-soft:#FBEED6;
+    --info:#3B82C4; --info-soft:#E3EEF7;
+    --radius:16px; --radius-sm:11px;
+    --shadow:0 1px 2px rgba(27,26,46,.04), 0 10px 28px rgba(27,26,46,.06);
+    --shadow-lg:0 16px 50px rgba(27,26,46,.22);
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:var(--paper);color:var(--ink);font-family:"Inter",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  .mono{font-family:"JetBrains Mono",monospace}
-  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
-  a{color:inherit}
-  h1,h2,h3,.display{font-family:"Space Grotesk",sans-serif;letter-spacing:-.02em;line-height:1.02}
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{font-family:'Inter',system-ui,sans-serif; background:var(--canvas); color:var(--text);
+    -webkit-font-smoothing:antialiased; font-size:14px; line-height:1.45}
+  #root{height:100%}
+  .num{font-family:'Sora',sans-serif; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .disp{font-family:'Sora',sans-serif; letter-spacing:-.02em}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit}
+  input,select,textarea{font-family:inherit; font-size:14px; color:var(--text)}
+  ::selection{background:var(--primary-soft)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
-  /* nav */
-  header{position:sticky;top:0;z-index:50;background:rgba(250,249,246,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
-  .nav-name{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:.95rem}
-  .nav-name b{color:var(--accent)}
-  .nav ul{display:flex;gap:28px;list-style:none}
-  .nav a{text-decoration:none;color:var(--ink-soft);font-size:.92rem;font-weight:500;transition:color .2s}
-  .nav a:hover{color:var(--ink)}
-  .nav .cta{color:var(--accent);font-weight:600}
+  .shell{display:grid; grid-template-columns:250px 1fr; height:100%}
+  /* dark sidebar */
+  .sidebar{background:var(--ink); display:flex; flex-direction:column; padding:20px 14px; gap:4px; min-height:0}
+  .brand{display:flex; align-items:center; gap:11px; padding:6px 10px 20px}
+  .logo{width:36px; height:36px; border-radius:11px; flex:none; background:linear-gradient(135deg,var(--primary),#7B6CFF);
+    display:grid; place-items:center; color:#fff; box-shadow:0 6px 18px rgba(91,75,232,.5)}
+  .brand b{font-family:'Sora',sans-serif; font-size:18px; color:#fff; letter-spacing:-.01em}
+  .brand span{display:block; font-size:10.5px; color:var(--sl-txt); letter-spacing:.08em; text-transform:uppercase; font-weight:600}
+  .nav-label{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.35); padding:16px 12px 7px}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:11px; color:var(--sl-txt);
+    font-weight:500; transition:.16s; width:100%; text-align:left}
+  .nav-item svg{flex:none}
+  .nav-item:hover{background:var(--sl); color:#fff}
+  .nav-item.active{background:var(--primary); color:#fff; font-weight:600; box-shadow:0 6px 16px rgba(91,75,232,.4)}
+  .nav-item .badge{margin-left:auto; background:var(--accent); color:#fff; font-size:10px; font-weight:700;
+    padding:1px 7px; border-radius:20px; font-family:'Sora'}
+  .side-foot{margin-top:auto; padding-top:12px}
+  .store-card{background:var(--ink-2); border:1px solid var(--sl); border-radius:13px; padding:13px; display:flex; align-items:center; gap:11px}
+  .store-card .sw{width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,#FF8A3D,#FF6B9D); flex:none}
+  .store-card b{color:#fff; font-size:13px; font-family:'Sora'} .store-card span{color:var(--sl-txt); font-size:11px}
+  .reset-link{width:100%; text-align:center; color:rgba(255,255,255,.4); font-size:12px; padding:10px; margin-top:6px; border-radius:10px; transition:.15s}
+  .reset-link:hover{background:var(--sl); color:var(--sl-txt)}
 
-  /* hero */
-  .hero{padding:80px 0 56px;position:relative}
-  .status{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--ink-soft);border:1px solid var(--line);background:var(--card);padding:7px 15px;border-radius:30px;margin-bottom:32px}
-  .status .blip{width:8px;height:8px;border-radius:50%;background:#2bbf6a;box-shadow:0 0 0 0 rgba(43,191,106,.5);animation:pulse 2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(43,191,106,.5)}70%{box-shadow:0 0 0 8px rgba(43,191,106,0)}100%{box-shadow:0 0 0 0 rgba(43,191,106,0)}}
-  .hero h1{font-size:clamp(3rem,11vw,7.5rem);font-weight:700;letter-spacing:-.04em}
-  .hero h1 .l2{display:block;color:var(--ink-soft)}
-  .hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-top:36px;flex-wrap:wrap}
-  .hero-row p{font-size:1.18rem;max-width:46ch;color:var(--ink-soft)}
-  .hero-row p b{color:var(--ink);font-weight:600}
-  .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
-  .btn{font-weight:600;text-decoration:none;border-radius:40px;padding:13px 24px;font-size:.95rem;transition:transform .15s,box-shadow .25s,background .2s;display:inline-block}
-  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 22px rgba(47,91,234,.28)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(47,91,234,.38)}
-  .btn-ghost{border:1px solid var(--line);background:var(--card);color:var(--ink)}
-  .btn-ghost:hover{border-color:var(--ink)}
+  .main{display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden}
+  .topbar{height:66px; flex:none; background:var(--surface); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:16px; padding:0 26px}
+  .topbar h1{font-family:'Sora',sans-serif; font-size:20px; letter-spacing:-.02em; font-weight:600}
+  .topbar .sub{font-size:12px; color:var(--faint); margin-top:1px}
+  .search{margin-left:auto; display:flex; align-items:center; gap:9px; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:11px; padding:9px 13px; width:250px; color:var(--faint)}
+  .search input{border:none; background:none; outline:none; width:100%}
+  .icon-btn{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; color:var(--muted);
+    border:1px solid var(--line); background:var(--surface-2); position:relative; transition:.16s}
+  .icon-btn:hover{color:var(--text); border-color:#ddd9e6}
+  .icon-btn .dot{position:absolute; top:9px; right:10px; width:7px; height:7px; border-radius:50%; background:var(--accent); border:2px solid var(--surface-2)}
+  .avatar{width:40px; height:40px; border-radius:11px; flex:none; display:grid; place-items:center;
+    background:linear-gradient(135deg,#5B4BE8,#7B6CFF); color:#fff; font-weight:600; font-size:13px; font-family:'Sora'}
 
-  /* marquee */
-  .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;overflow:hidden;white-space:nowrap;margin-top:8px;background:var(--card)}
-  .marquee-track{display:inline-block;animation:scroll 26s linear infinite}
-  .marquee-track span{font-family:"JetBrains Mono",monospace;font-size:.95rem;color:var(--ink-soft);margin:0 28px}
-  .marquee-track span b{color:var(--accent)}
-  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .scroll{overflow-y:auto; flex:1; padding:26px}
+  .scroll::-webkit-scrollbar{width:10px} .scroll::-webkit-scrollbar-thumb{background:#d9d5e4; border-radius:10px; border:3px solid var(--canvas)}
 
-  section{padding:96px 0}
-  .sec-label{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--accent);letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-  .sec-label::before{content:"";width:28px;height:1px;background:var(--accent)}
-  .sec-title{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;max-width:20ch}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
+  .card-h{display:flex; align-items:center; gap:12px; padding:18px 22px 0}
+  .card-h h3{font-family:'Sora',sans-serif; font-size:15px; font-weight:600; letter-spacing:-.01em}
+  .card-h .right{margin-left:auto; display:flex; gap:8px; align-items:center}
 
-  /* projects */
-  .proj-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;gap:20px;flex-wrap:wrap}
-  .proj-head p{color:var(--ink-soft);max-width:34ch}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
-  .card:hover{transform:translateY(-8px);box-shadow:0 24px 50px rgba(20,21,26,.1);border-color:transparent}
-  .preview{height:180px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:22px}
+  .pill{font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:5px}
+  .pill.pos{background:var(--positive-soft); color:var(--positive)}
+  .pill.neg{background:var(--negative-soft); color:var(--negative)}
+  .pill.muted{background:var(--surface-2); color:var(--muted)}
+  .btn{display:inline-flex; align-items:center; gap:7px; font-weight:600; font-size:13px; padding:10px 16px;
+    border-radius:11px; transition:.16s; border:1px solid transparent}
+  .btn.primary{background:var(--primary); color:#fff; box-shadow:0 6px 16px rgba(91,75,232,.3)}
+  .btn.primary:hover{background:var(--primary-d)}
+  .btn.ghost{background:var(--surface); border-color:var(--line); color:var(--text)}
+  .btn.ghost:hover{border-color:#ddd9e6; background:var(--surface-2)}
+  .seg{display:inline-flex; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:3px}
+  .seg button{font-size:12px; font-weight:600; color:var(--muted); padding:6px 12px; border-radius:8px; transition:.14s}
+  .seg button.on{background:var(--surface); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.07)}
 
-  /* mini preview: obzhig */
-  .pv-obzhig{background:#1a1410}
-  .pv-obzhig .bean{width:54px;height:64px;border-radius:50% 50% 48% 52%/60% 60% 40% 40%;background:linear-gradient(135deg,#d9622b,#8a3d18);position:relative;margin-bottom:14px}
-  .pv-obzhig .bean::after{content:"";position:absolute;top:8%;left:50%;width:6%;height:84%;transform:translateX(-50%);background:rgba(0,0,0,.4);border-radius:40%}
-  .pv-obzhig .bar{height:5px;width:70%;border-radius:4px;background:linear-gradient(90deg,#d6a94e,#d9622b);margin-bottom:8px}
-  .pv-obzhig .price{font-family:"JetBrains Mono",monospace;color:#d6a94e;font-size:.85rem}
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+  .kpi{padding:19px 21px}
+  .kpi .top{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; font-weight:500}
+  .kpi .ic{width:36px; height:36px; border-radius:10px; display:grid; place-items:center}
+  .kpi .val{font-size:28px; font-weight:600; margin:13px 0 8px}
+  .kpi .foot{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--faint)}
 
-  /* mini preview: forma */
-  .pv-forma{background:#15171a;color:#f6f6f3}
-  .pv-forma .big{font-family:"Space Grotesk";font-weight:700;font-size:2.6rem;line-height:1}
-  .pv-forma .rule{height:1px;background:rgba(246,246,243,.25);margin:12px 0}
-  .pv-forma .tag{font-family:"JetBrains Mono";font-size:.72rem;letter-spacing:.18em;color:rgba(246,246,243,.6);text-transform:uppercase}
+  .grid-main{display:grid; grid-template-columns:1.6fr 1fr; gap:16px; margin-top:16px}
 
-  /* mini preview: ritm */
-  .pv-ritm{background:linear-gradient(130deg,#6d4aff,#ff6b5c)}
-  .pv-ritm .chip{background:rgba(255,255,255,.9);border-radius:12px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:9px;font-size:.8rem;font-weight:600;color:#1b1530;width:75%}
-  .pv-ritm .dot{width:18px;height:18px;border-radius:6px;background:#34e2b0}
-  .pv-ritm .streak{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:12px;padding:8px 12px;font-size:.78rem;font-weight:600;width:75%}
+  .chart-wrap{padding:8px 14px 16px; position:relative}
+  .axis{fill:var(--faint); font-size:10.5px; font-family:'Inter'}
+  .gridline{stroke:var(--line-2); stroke-width:1}
+  .rev-line{fill:none; stroke:var(--primary); stroke-width:2.5; stroke-linecap:round;
+    stroke-dasharray:1500; stroke-dashoffset:1500; animation:draw 1.4s .15s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .tip{position:absolute; pointer-events:none; background:var(--ink); color:#fff; padding:7px 11px; border-radius:9px;
+    font-size:12px; transform:translate(-50%,-130%); white-space:nowrap; box-shadow:var(--shadow-lg); opacity:0; transition:opacity .12s}
+  .tip b{font-family:'Sora'}
 
-  .card-body{padding:22px 22px 26px;flex:1;display:flex;flex-direction:column}
-  .card-type{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--accent);letter-spacing:.04em;margin-bottom:8px}
-  .card h3{font-size:1.35rem;font-weight:700;margin-bottom:8px}
-  .card-body p{color:var(--ink-soft);font-size:.92rem;flex:1}
-  .card-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
-  .card-tags span{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--ink-soft);border:1px solid var(--line);padding:3px 9px;border-radius:20px}
-  .card-go{margin-top:16px;font-weight:600;color:var(--accent);font-size:.9rem;display:flex;align-items:center;gap:6px;transition:gap .2s}
-  .card:hover .card-go{gap:12px}
+  /* product / order rows */
+  .prow{display:flex; align-items:center; gap:13px; padding:13px 22px; border-bottom:1px solid var(--line-2); transition:.12s}
+  .prow:hover{background:var(--surface-2)} .prow:last-child{border:none}
+  .thumb{width:44px; height:44px; border-radius:11px; flex:none; display:grid; place-items:center; color:#fff;
+    font-family:'Sora'; font-weight:600; font-size:14px}
+  .prow .info{min-width:0; flex:1} .prow .info b{font-weight:600; font-size:13.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .prow .info span{font-size:12px; color:var(--faint)}
+  .spark{width:74px; height:30px; flex:none}
 
-  /* services / about */
-  .about{background:var(--ink);color:var(--paper)}
-  .about .sec-label{color:#8fa6ff}
-  .about .sec-label::before{background:#8fa6ff}
-  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
-  .about-grid h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:#fff}
-  .about-grid h2 em{font-style:normal;color:#8fa6ff}
-  .serv-list{list-style:none}
-  .serv-list li{padding:20px 0;border-top:1px solid rgba(250,249,246,.14);display:flex;gap:18px;align-items:baseline}
-  .serv-list li:last-child{border-bottom:1px solid rgba(250,249,246,.14)}
-  .serv-n{font-family:"JetBrains Mono",monospace;color:#7d8aa8;font-size:.85rem;flex-shrink:0}
-  .serv-list b{font-family:"Space Grotesk";font-weight:600;font-size:1.15rem;display:block;color:#fff}
-  .serv-list small{color:rgba(250,249,246,.6);font-size:.92rem}
+  .tablecard{margin-top:0; overflow:hidden}
+  .tbl{width:100%; border-collapse:collapse}
+  .tbl th{text-align:left; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--faint);
+    padding:13px 18px; border-bottom:1px solid var(--line); background:var(--surface-2); cursor:pointer; user-select:none}
+  .tbl th:hover{color:var(--muted)} .tbl th .arr{opacity:.5; font-size:10px; margin-left:4px}
+  .tbl td{padding:13px 18px; border-bottom:1px solid var(--line-2); font-size:13.5px} .tbl tr:last-child td{border:none}
+  .tbl tr.click{cursor:pointer} .tbl tr.click:hover td{background:var(--surface-2)}
+  .tag{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:3px 9px; border-radius:8px}
+  .who{display:flex; align-items:center; gap:11px}
+  .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap}
+  .field{display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:9px 13px; color:var(--faint)}
+  .field input{border:none; outline:none; background:none; width:190px}
+  .field select{border:none; outline:none; background:none; cursor:pointer; color:var(--text); font-weight:500}
 
-  /* contact */
-  .contact{text-align:center}
-  .contact h2{font-size:clamp(2.2rem,6vw,4rem);font-weight:700;margin:14px 0 20px}
-  .contact p{color:var(--ink-soft);max-width:42ch;margin:0 auto 38px;font-size:1.1rem}
-  .contact-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-  .clink{display:inline-flex;align-items:center;gap:9px;text-decoration:none;border:1px solid var(--line);background:var(--card);padding:13px 22px;border-radius:40px;font-weight:600;font-size:.95rem;transition:border-color .2s,transform .15s}
-  .clink:hover{border-color:var(--accent);transform:translateY(-2px)}
-  .clink .mono{font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--ink-soft)}
+  .stockbar{height:6px; width:80px; background:var(--line); border-radius:6px; overflow:hidden}
+  .stockbar i{display:block; height:100%; border-radius:6px}
 
-  footer{border-top:1px solid var(--line);padding:32px 0}
-  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-  .foot small{color:var(--ink-soft);font-size:.85rem;font-family:"JetBrains Mono",monospace}
+  /* product grid */
+  .pgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px}
+  .pcard{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:.18s}
+  .pcard:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg)}
+  .pcard .img{height:120px; display:grid; place-items:center; color:#fff; font-family:'Sora'; font-weight:700; font-size:30px; position:relative}
+  .pcard .img .flag{position:absolute; top:10px; left:10px}
+  .pcard .body{padding:14px 16px}
+  .pcard .body b{font-size:14px; display:block; margin-bottom:3px} .pcard .body .cat{font-size:12px; color:var(--faint)}
+  .pcard .body .price{font-family:'Sora'; font-weight:700; font-size:18px; margin-top:10px}
+  .pcard .body .meta{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--muted)}
+  .pcard .acts{display:flex; gap:8px; padding:0 16px 14px}
+  .mini{flex:1; padding:8px; border:1px solid var(--line); border-radius:9px; font-size:12.5px; font-weight:600; color:var(--muted); transition:.14s; text-align:center}
+  .mini:hover{background:var(--surface-2); color:var(--text)} .mini.del:hover{color:var(--negative); border-color:var(--negative)}
 
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-  .reveal.in{opacity:1;transform:none}
+  /* modal / drawer */
+  .overlay{position:fixed; inset:0; background:rgba(27,26,46,.45); backdrop-filter:blur(3px); z-index:50; animation:fade .18s ease}
+  @keyframes fade{from{opacity:0}}
+  .modal{background:var(--surface); border-radius:20px; width:100%; max-width:480px; box-shadow:var(--shadow-lg);
+    animation:pop .2s cubic-bezier(.2,.8,.3,1); overflow:hidden; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%)}
+  @keyframes pop{from{transform:translate(-50%,-46%) scale(.97); opacity:0}}
+  .drawer{position:fixed; top:0; right:0; height:100%; width:440px; max-width:92vw; background:var(--surface);
+    box-shadow:var(--shadow-lg); animation:slide .26s cubic-bezier(.2,.8,.3,1); display:flex; flex-direction:column}
+  @keyframes slide{from{transform:translateX(40px); opacity:.4}}
+  .modal-h{padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center}
+  .modal-h h3{font-family:'Sora'; font-size:18px; font-weight:600} .modal-h .x{margin-left:auto; color:var(--faint); cursor:pointer; font-size:22px; line-height:1}
+  .modal-b{padding:22px 24px; display:flex; flex-direction:column; gap:16px; overflow-y:auto}
+  .modal-f{padding:16px 24px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end; background:var(--surface-2)}
+  label.lbl{font-size:12px; font-weight:600; color:var(--muted); display:block; margin-bottom:6px}
+  .inp{width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:11px; outline:none; transition:.14s; background:var(--surface)}
+  .inp:focus{border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft)}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
 
-  @media(max-width:860px){
-    .cards{grid-template-columns:1fr}
-    .about-grid{grid-template-columns:1fr;gap:36px}
-    .nav ul{display:none}
+  /* order pipeline in drawer */
+  .pipe{display:flex; gap:6px; margin:4px 0}
+  .pipe .step{flex:1; height:5px; border-radius:6px; background:var(--line)}
+  .pipe .step.on{background:var(--primary)}
+  .line-item{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--line-2)}
+  .line-item:last-child{border:none}
+
+  .empty{padding:60px 20px; text-align:center; color:var(--faint)}
+  .empty b{display:block; color:var(--muted); font-size:15px; margin:12px 0 4px; font-family:'Sora'}
+
+  @media (max-width:980px){.kpis{grid-template-columns:1fr 1fr} .grid-main{grid-template-columns:1fr}}
+  @media (max-width:760px){
+    .shell{grid-template-columns:1fr} .sidebar{display:none} .search{display:none}
+    .topbar{padding:0 16px} .scroll{padding:16px} .kpis{grid-template-columns:1fr 1fr} .field input{width:120px}
   }
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
-  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap nav">
-    <div class="nav-name">semyon<b>.</b>kaleda</div>
-    <nav><ul>
-      <li><a href="#work">Работы</a></li>
-      <li><a href="#about">Услуги</a></li>
-      <li><a href="#contact" class="cta">Связаться</a></li>
-    </ul></nav>
-  </div>
-</header>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useRef}=React;
 
-<section class="hero">
-  <div class="wrap">
-    <div class="status"><span class="blip"></span>открыт для заказов · фриланс</div>
-    <h1>Semyon Kaleda<span class="l2">веб-разработчик</span></h1>
-    <div class="hero-row">
-      <p>Делаю <b>сайты под ключ</b>: лендинги, интернет-магазины и визитки. Адаптивная вёрстка, чистый код, аккуратный результат — от идеи до публикации.</p>
-      <div class="hero-actions">
-        <a href="#work" class="btn btn-primary">Посмотреть работы</a>
-        <a href="#contact" class="btn btn-ghost">Написать мне</a>
+const store={
+  get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+};
+const money=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const moneyK=n=>'$'+(Math.abs(n)>=1000?(n/1000).toFixed(1)+'k':Number(n).toFixed(0));
+
+const I={
+  grid:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
+  bag:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>,
+  box:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg>,
+  users:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6M21 20c0-2.6-1.6-4.9-4-5.7"/></svg>,
+  gear:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 6.6 19l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13.6H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>,
+  search:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>,
+  bell:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>,
+  plus:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>,
+  up:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7 14l5-5 5 5"/></svg>,
+  down:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10l5 5 5-5"/></svg>,
+  dollar:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+  cart:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 13h11l2-9H6"/></svg>,
+  pct:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 5L5 19"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>,
+  avg:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17l6-6 4 4 7-8"/><path d="M17 7h4v4"/></svg>,
+};
+
+/* ---- seed data ---- */
+const CATCOLOR={Home:'#5B4BE8',Kitchen:'#FF8A3D',Lighting:'#E8A33D',Textiles:'#15A66A',Decor:'#E2574C'};
+function gradFor(s){const i=s.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const g=[['#5B4BE8','#7B6CFF'],['#FF8A3D','#FF6B9D'],['#15A66A','#3FD68F'],['#E89A2E','#F5C242'],['#E2574C','#FF8A7A'],['#3B82C4','#67B0E8']];
+  return g[i%g.length];}
+function sparkData(seed){const r=[];let v=20+seed%30;for(let i=0;i<10;i++){v+=((seed*(i+3))%11)-4;r.push(Math.max(8,v));}return r;}
+
+function seedProducts(){
+  const P=[
+    ['Linen Throw Pillow','Textiles',38,124,'live'],['Ceramic Pour-Over','Kitchen',54,7,'live'],
+    ['Walnut Desk Tray','Home',46,62,'live'],['Wool Runner Rug','Textiles',180,18,'live'],
+    ['Brass Table Lamp','Lighting',129,3,'live'],['Stoneware Mug Set','Kitchen',42,210,'live'],
+    ['Rattan Pendant Light','Lighting',95,0,'draft'],['Oak Picture Frame','Decor',24,156,'live'],
+    ['Marble Coaster Set','Decor',34,88,'live'],['Cotton Bath Towels','Textiles',58,71,'live'],
+    ['Cast Iron Skillet','Kitchen',76,2,'live'],['Ceramic Plant Pot','Home',29,134,'live'],
+  ];
+  return P.map((p,i)=>({id:'P-'+(2100+i),name:p[0],cat:p[1],price:p[2],stock:p[3],status:p[4],
+    sales:60+((i*37)%240),spark:sparkData(p[0].length*7+i)}));
+}
+const CUSTNAMES=['Aziza R.','Daniel M.','Sofia L.','Timur K.','Elena V.','Marcus T.','Nadia S.','James O.','Leila A.','Victor P.'];
+function seedOrders(){
+  const status=['delivered','shipped','processing','paid','refunded'];
+  const today=new Date('2026-06-29');const rows=[];
+  for(let i=0;i<24;i++){
+    const d=new Date(today);d.setDate(d.getDate()-(i*0.9|0));
+    const items=1+((i*3)%4);const total=(items*(28+((i*53)%140)));
+    rows.push({id:'#'+(10480-i),customer:CUSTNAMES[i%CUSTNAMES.length],
+      total,items,status:status[i%5],date:d.toISOString().slice(0,10),
+      method:['Card','PayPal','Apple Pay','Card'][i%4]});
+  }
+  return rows;
+}
+
+/* ---- charts ---- */
+function Spark({data,color}){
+  const W=74,H=30,max=Math.max(...data),min=Math.min(...data);
+  const x=i=>(i/(data.length-1))*W;const y=v=>H-2-((v-min)/(max-min||1))*(H-4);
+  const d=data.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+  return <svg className="spark" viewBox={`0 0 ${W} ${H}`}><path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+}
+function RevChart({data}){
+  const W=620,H=215,P={t:14,r:14,b:24,l:38},iw=W-P.l-P.r,ih=H-P.t-P.b;
+  const max=Math.max(...data.map(d=>d.v))*1.12,min=Math.min(...data.map(d=>d.v))*0.86;
+  const x=i=>P.l+(i/(data.length-1))*iw,y=v=>P.t+ih-((v-min)/(max-min))*ih;
+  const line=data.map((d,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(d.v).toFixed(1)}`).join(' ');
+  const area=`${line} L${x(data.length-1)} ${P.t+ih} L${P.l} ${P.t+ih} Z`;
+  const [hov,setHov]=useState(null);const ref=useRef();
+  const move=e=>{const r=ref.current.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*W;
+    let i=Math.round((px-P.l)/iw*(data.length-1));i=Math.max(0,Math.min(data.length-1,i));setHov(i);};
+  const ticks=[min,(min+max)/2,max];
+  return(
+    <div className="chart-wrap" onMouseLeave={()=>setHov(null)}>
+      <svg ref={ref} viewBox={`0 0 ${W} ${H}`} style={{width:'100%',display:'block'}} onMouseMove={move}>
+        <defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#5B4BE8" stopOpacity=".2"/><stop offset="1" stopColor="#5B4BE8" stopOpacity="0"/></linearGradient></defs>
+        {ticks.map((t,i)=><g key={i}><line className="gridline" x1={P.l} x2={W-P.r} y1={y(t)} y2={y(t)}/>
+          <text className="axis" x={P.l-8} y={y(t)+3} textAnchor="end">{moneyK(t)}</text></g>)}
+        <path d={area} fill="url(#rg)"/><path className="rev-line" d={line}/>
+        {data.map((d,i)=><text key={i} className="axis" x={x(i)} y={H-7} textAnchor="middle">{d.l}</text>)}
+        {hov!==null&&<g><line x1={x(hov)} x2={x(hov)} y1={P.t} y2={P.t+ih} stroke="#ECEAF1" strokeDasharray="3 3"/>
+          <circle cx={x(hov)} cy={y(data[hov].v)} r="5" fill="#fff" stroke="#5B4BE8" strokeWidth="2.5"/></g>}
+      </svg>
+      {hov!==null&&<div className="tip" style={{left:`${x(hov)/W*100}%`,top:`${y(data[hov].v)/H*100}%`,opacity:1}}>
+        <b>{money(data[hov].v)}</b> · {data[hov].l}</div>}
+    </div>
+  );
+}
+
+function useCountUp(target,dur=900){
+  const [v,setV]=useState(0);
+  useEffect(()=>{let raf,start;const step=t=>{if(!start)start=t;const p=Math.min((t-start)/dur,1);
+    setV(target*(1-Math.pow(1-p,3)));if(p<1)raf=requestAnimationFrame(step);};
+    raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);},[target]);
+  return v;
+}
+function KPI({icon,bg,c,label,value,prefix,suffix,delta,up}){
+  const v=useCountUp(value);
+  return(
+    <div className="card kpi">
+      <div className="top"><div className="ic" style={{background:bg,color:c}}>{icon}</div>{label}</div>
+      <div className="val num">{prefix||''}{Math.round(v).toLocaleString('en-US')}{suffix||''}</div>
+      <div className="foot"><span className={'pill '+(up?'pos':'neg')}>{up?I.up:I.down}{delta}</span><span>vs last week</span></div>
+    </div>
+  );
+}
+const ORDER_STATUS={
+  paid:['var(--info-soft)','var(--info)','Paid'],processing:['var(--warning-soft)','var(--warning)','Processing'],
+  shipped:['var(--primary-soft)','var(--primary)','Shipped'],delivered:['var(--positive-soft)','var(--positive)','Delivered'],
+  refunded:['var(--negative-soft)','var(--negative)','Refunded'],
+};
+function orderTag(s){const [bg,c,t]=ORDER_STATUS[s];
+  return <span className="tag" style={{background:bg,color:c}}><span style={{width:6,height:6,borderRadius:'50%',background:c}}/>{t}</span>;}
+
+/* ---- views ---- */
+function Overview({products,orders}){
+  const revenue=useMemo(()=>{
+    const base=[8.2,7.4,9.1,8.6,10.2,9.7,11.4,10.9,12.6,12.1,13.8,14.6];
+    const labels=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+    return base.map((v,i)=>({l:labels[i],v:Math.round(v*1000)}));
+  },[]);
+  const totalRev=orders.filter(o=>o.status!=='refunded').reduce((s,o)=>s+o.total,0);
+  const top=[...products].sort((a,b)=>b.sales-a.sales).slice(0,5);
+  const recent=orders.slice(0,6);
+  const lowStock=products.filter(p=>p.stock>0&&p.stock<=5).length;
+  return(
+    <>
+      <div className="kpis">
+        <KPI icon={I.dollar} bg="var(--primary-soft)" c="var(--primary)" label="Revenue (30d)" prefix="$" value={48920} delta="14.2%" up/>
+        <KPI icon={I.cart} bg="var(--accent)22" c="var(--accent)" label="Orders" value={orders.length*18} delta="9.0%" up/>
+        <KPI icon={I.avg} bg="var(--positive-soft)" c="var(--positive)" label="Avg. order value" prefix="$" value={Math.round(totalRev/orders.length)} delta="4.3%" up/>
+        <KPI icon={I.pct} bg="var(--warning-soft)" c="var(--warning)" label="Conversion" value={3} suffix=".4%" delta="0.2%" up={false}/>
+      </div>
+      <div className="grid-main">
+        <div className="card">
+          <div className="card-h"><h3>Revenue</h3><div className="right"><span className="pill pos">{I.up}{moneyK(revenue[11].v-revenue[0].v)}</span></div></div>
+          <RevChart data={revenue}/>
+        </div>
+        <div className="card">
+          <div className="card-h"><h3>Top products</h3>{lowStock>0&&<div className="right"><span className="pill neg">{lowStock} low stock</span></div>}</div>
+          <div style={{marginTop:6}}>
+            {top.map((p,i)=>{const[g1,g2]=gradFor(p.name);return(
+              <div className="prow" key={p.id}>
+                <div className="thumb" style={{background:`linear-gradient(135deg,${g1},${g2})`}}>{p.name.split(' ').slice(0,2).map(w=>w[0]).join('')}</div>
+                <div className="info"><b>{p.name}</b><span>{p.sales} sold · {p.cat}</span></div>
+                <Spark data={p.spark} color={CATCOLOR[p.cat]}/>
+              </div>);})}
+          </div>
+        </div>
+      </div>
+      <div className="card" style={{marginTop:16}}>
+        <div className="card-h"><h3>Recent orders</h3><div className="right"><span className="pill muted">{orders.length} today</span></div></div>
+        <table className="tbl" style={{marginTop:14}}>
+          <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody>{recent.map(o=>
+            <tr key={o.id}><td className="num" style={{fontWeight:600}}>{o.id}</td><td>{o.customer}</td>
+              <td style={{color:'var(--muted)'}}>{o.items}</td><td>{orderTag(o.status)}</td>
+              <td className="num" style={{fontWeight:600}}>{money(o.total)}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function Orders({orders,onOpen}){
+  const [q,setQ]=useState('');const [st,setSt]=useState('all');const [sort,setSort]=useState({k:'date',dir:'desc'});
+  const filtered=useMemo(()=>{
+    let r=orders.filter(o=>(q===''||o.id.includes(q)||o.customer.toLowerCase().includes(q.toLowerCase()))&&(st==='all'||o.status===st));
+    r=[...r].sort((a,b)=>{let av=a[sort.k],bv=b[sort.k];if(sort.k==='total'){av=a.total;bv=b.total}else{av=''+av;bv=''+bv}
+      return(av>bv?1:av<bv?-1:0)*(sort.dir==='asc'?1:-1);});return r;
+  },[orders,q,st,sort]);
+  const th=(k,l)=><th onClick={()=>setSort(s=>({k,dir:s.k===k&&s.dir==='desc'?'asc':'desc'}))}>{l}<span className="arr">{sort.k===k?(sort.dir==='asc'?'▲':'▼'):'↕'}</span></th>;
+  return(
+    <>
+      <div className="toolbar">
+        <div className="field">{I.search}<input placeholder="Search order or customer…" value={q} onChange={e=>setQ(e.target.value)}/></div>
+        <div className="field"><select value={st} onChange={e=>setSt(e.target.value)}>
+          <option value="all">All statuses</option>{Object.keys(ORDER_STATUS).map(s=><option key={s} value={s}>{ORDER_STATUS[s][2]}</option>)}</select></div>
+        <span className="pill muted" style={{marginLeft:'auto'}}>{filtered.length} orders</span>
+      </div>
+      <div className="card tablecard">
+        <table className="tbl">
+          <thead><tr>{th('id','Order')}{th('customer','Customer')}{th('date','Date')}{th('items','Items')}{th('status','Status')}{th('total','Total')}</tr></thead>
+          <tbody>{filtered.map(o=>
+            <tr key={o.id} className="click" onClick={()=>onOpen(o)}>
+              <td className="num" style={{fontWeight:600}}>{o.id}</td><td><div className="who"><div className="thumb" style={{width:30,height:30,fontSize:11,borderRadius:8,background:`linear-gradient(135deg,${gradFor(o.customer)[0]},${gradFor(o.customer)[1]})`}}>{o.customer.split(' ').map(w=>w[0]).join('')}</div>{o.customer}</div></td>
+              <td className="num" style={{color:'var(--muted)'}}>{o.date}</td><td style={{color:'var(--muted)'}}>{o.items}</td>
+              <td>{orderTag(o.status)}</td><td className="num" style={{fontWeight:600}}>{money(o.total)}</td></tr>)}
+          </tbody>
+        </table>
+        {filtered.length===0&&<div className="empty"><div style={{opacity:.4}}>{I.bag}</div><b>No matching orders</b>Adjust the filters or search above.</div>}
+      </div>
+    </>
+  );
+}
+
+function Products({products,onAdd,onDelete,onRestock}){
+  const [q,setQ]=useState('');const [cat,setCat]=useState('all');const [view,setView]=useState('grid');
+  const filtered=products.filter(p=>(q===''||p.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='all'||p.cat===cat));
+  const stockColor=s=>s===0?'var(--negative)':s<=5?'var(--warning)':'var(--positive)';
+  const stockLabel=s=>s===0?'Out of stock':s<=5?'Low · '+s+' left':s+' in stock';
+  return(
+    <>
+      <div className="toolbar">
+        <div className="field">{I.search}<input placeholder="Search products…" value={q} onChange={e=>setQ(e.target.value)}/></div>
+        <div className="field"><select value={cat} onChange={e=>setCat(e.target.value)}>
+          <option value="all">All categories</option>{Object.keys(CATCOLOR).map(c=><option key={c}>{c}</option>)}</select></div>
+        <div className="seg"><button className={view==='grid'?'on':''} onClick={()=>setView('grid')}>Grid</button><button className={view==='list'?'on':''} onClick={()=>setView('list')}>List</button></div>
+        <button className="btn primary" style={{marginLeft:'auto'}} onClick={onAdd}>{I.plus} Add product</button>
+      </div>
+      {filtered.length===0?<div className="card"><div className="empty"><div style={{opacity:.4}}>{I.box}</div><b>No products found</b>Try a different search or add a new one.</div></div>:
+      view==='grid'?
+        <div className="pgrid">
+          {filtered.map(p=>{const[g1,g2]=gradFor(p.name);return(
+            <div className="pcard" key={p.id}>
+              <div className="img" style={{background:`linear-gradient(135deg,${g1},${g2})`}}>
+                {p.name.split(' ').slice(0,2).map(w=>w[0]).join('')}
+                {p.status==='draft'&&<span className="flag pill" style={{background:'rgba(0,0,0,.35)',color:'#fff'}}>Draft</span>}
+              </div>
+              <div className="body">
+                <b>{p.name}</b><div className="cat">{p.cat}</div>
+                <div className="price">{money(p.price)}</div>
+                <div className="meta"><span style={{width:8,height:8,borderRadius:'50%',background:stockColor(p.stock)}}/>{stockLabel(p.stock)} · {p.sales} sold</div>
+              </div>
+              <div className="acts">
+                <button className="mini" onClick={()=>onRestock(p.id)}>Restock +25</button>
+                <button className="mini del" onClick={()=>onDelete(p.id)}>Delete</button>
+              </div>
+            </div>);})}
+        </div>
+      :
+        <div className="card tablecard">
+          <table className="tbl"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Sold</th><th></th></tr></thead>
+          <tbody>{filtered.map(p=>{const[g1,g2]=gradFor(p.name);return(
+            <tr key={p.id}>
+              <td><div className="who"><div className="thumb" style={{width:36,height:36,fontSize:12,borderRadius:9,background:`linear-gradient(135deg,${g1},${g2})`}}>{p.name.split(' ').slice(0,2).map(w=>w[0]).join('')}</div>
+                <div><div style={{fontWeight:600}}>{p.name}</div><div style={{fontSize:11,color:'var(--faint)'}}>{p.id}</div></div></div></td>
+              <td><span style={{display:'inline-flex',alignItems:'center',gap:7}}><span style={{width:8,height:8,borderRadius:3,background:CATCOLOR[p.cat]}}/>{p.cat}</span></td>
+              <td className="num" style={{fontWeight:600}}>{money(p.price)}</td>
+              <td><div style={{display:'flex',alignItems:'center',gap:9}}><div className="stockbar"><i style={{width:Math.min(100,p.stock/2)+'%',background:stockColor(p.stock)}}/></div><span style={{fontSize:12,color:stockColor(p.stock),fontWeight:600}}>{p.stock}</span></div></td>
+              <td className="num" style={{color:'var(--muted)'}}>{p.sales}</td>
+              <td style={{textAlign:'right'}}><button className="mini" style={{display:'inline-block',width:'auto',padding:'6px 10px'}} onClick={()=>onRestock(p.id)}>Restock</button> <button className="mini del" style={{display:'inline-block',width:'auto',padding:'6px 10px'}} onClick={()=>onDelete(p.id)}>Delete</button></td>
+            </tr>);})}
+          </tbody></table>
+        </div>}
+    </>
+  );
+}
+
+function Customers({orders}){
+  const map={};
+  orders.forEach(o=>{if(!map[o.customer])map[o.customer]={name:o.customer,spend:0,n:0,last:o.date};
+    if(o.status!=='refunded')map[o.customer].spend+=o.total; map[o.customer].n++;});
+  const rows=Object.values(map).sort((a,b)=>b.spend-a.spend);
+  const tier=v=>v>400?['var(--primary-soft)','var(--primary)','VIP']:v>200?['var(--positive-soft)','var(--positive)','Returning']:['var(--surface-2)','var(--muted)','New'];
+  return(
+    <div className="card tablecard">
+      <div className="card-h" style={{paddingBottom:0}}><h3>Customers</h3><div className="right"><span className="pill muted">{rows.length} total</span></div></div>
+      <table className="tbl" style={{marginTop:14}}><thead><tr><th>Customer</th><th>Segment</th><th>Orders</th><th>Last order</th><th>Lifetime spend</th></tr></thead>
+      <tbody>{rows.map((r,i)=>{const[bg,c,l]=tier(r.spend);const[g1,g2]=gradFor(r.name);return(
+        <tr key={i}><td><div className="who"><div className="thumb" style={{width:34,height:34,fontSize:12,borderRadius:9,background:`linear-gradient(135deg,${g1},${g2})`}}>{r.name.split(' ').map(w=>w[0]).join('')}</div><div style={{fontWeight:600}}>{r.name}</div></div></td>
+          <td><span className="tag" style={{background:bg,color:c}}>{l}</span></td>
+          <td className="num" style={{color:'var(--muted)'}}>{r.n}</td><td className="num" style={{color:'var(--muted)'}}>{r.last}</td>
+          <td className="num" style={{fontWeight:600}}>{money(r.spend)}</td></tr>);})}
+      </tbody></table>
+    </div>
+  );
+}
+
+function Settings(){
+  const [tog,setTog]=useState({stock:true,orders:true,reviews:false,promo:false});
+  const T=({k})=><div onClick={()=>setTog(s=>({...s,[k]:!s[k]}))} style={{width:42,height:24,borderRadius:20,background:tog[k]?'var(--primary)':'var(--line)',position:'relative',transition:'.2s',flex:'none',cursor:'pointer'}}><i style={{position:'absolute',top:3,left:tog[k]?21:3,width:18,height:18,borderRadius:'50%',background:'#fff',transition:'.2s',boxShadow:'0 1px 3px rgba(0,0,0,.2)'}}/></div>;
+  const row=(title,desc,ctl)=><div style={{display:'flex',alignItems:'center',gap:14,padding:'14px 0',borderBottom:'1px solid var(--line-2)'}}><div><b style={{display:'block',fontWeight:600,fontSize:13.5}}>{title}</b><span style={{fontSize:12,color:'var(--faint)'}}>{desc}</span></div><div style={{marginLeft:'auto'}}>{ctl}</div></div>;
+  return(
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div className="card" style={{padding:'4px 22px'}}>
+        <div className="card-h" style={{padding:'18px 0 0'}}><h3>Store details</h3></div>
+        <div style={{padding:'16px 0'}}>
+          <label className="lbl">Store name</label><input className="inp" defaultValue="Kasta" style={{marginBottom:14}}/>
+          <label className="lbl">Support email</label><input className="inp" defaultValue="hello@kasta.shop" style={{marginBottom:14}}/>
+          <div className="row2">
+            <div><label className="lbl">Currency</label><select className="inp"><option>USD ($)</option><option>EUR (€)</option><option>UZS</option></select></div>
+            <div><label className="lbl">Tax rate</label><input className="inp" defaultValue="8.0%"/></div>
+          </div>
+        </div>
+      </div>
+      <div className="card" style={{padding:'4px 22px'}}>
+        <div className="card-h" style={{padding:'18px 0 0'}}><h3>Notifications</h3></div>
+        <div style={{padding:'8px 0'}}>
+          {row('Low stock alerts','Notify when stock drops to 5 or fewer',<T k="stock"/>)}
+          {row('New order alerts','Email on every order placed',<T k="orders"/>)}
+          {row('Review requests','Auto-ask buyers for a review',<T k="reviews"/>)}
+          {row('Promo digest','Weekly marketing performance',<T k="promo"/>)}
+        </div>
+      </div>
+      <div className="card" style={{padding:'4px 22px',gridColumn:'1 / -1'}}>
+        <div className="card-h" style={{padding:'18px 0 0'}}><h3>Payment & shipping</h3></div>
+        <div style={{padding:'8px 0'}}>
+          {[['Card payments','Visa, Mastercard, Amex','var(--primary)'],['PayPal','Connected · default','var(--info)'],['Standard shipping','3–5 business days · $6.00','var(--accent)']].map((m,i)=>
+            <div key={i} style={{display:'flex',alignItems:'center',gap:14,padding:'14px 0',borderBottom:'1px solid var(--line-2)'}}>
+              <div style={{width:36,height:36,borderRadius:9,background:m[2]+'1A',color:m[2],display:'grid',placeItems:'center'}}>{I.dollar}</div>
+              <div><b style={{display:'block',fontWeight:600,fontSize:13.5}}>{m[0]}</b><span style={{fontSize:12,color:'var(--faint)'}}>{m[1]}</span></div>
+              <div style={{marginLeft:'auto'}}><span className="pill pos">Active</span></div></div>)}
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  );
+}
 
-<div class="marquee">
-  <div class="marquee-track">
-    <span>HTML5</span><span><b>/</b></span><span>CSS3</span><span><b>/</b></span><span>JavaScript</span><span><b>/</b></span><span>адаптивная вёрстка</span><span><b>/</b></span><span>анимации</span><span><b>/</b></span><span>Git</span><span><b>/</b></span><span>доступность</span><span><b>/</b></span><span>SEO-основы</span><span><b>/</b></span>
-    <span>HTML5</span><span><b>/</b></span><span>CSS3</span><span><b>/</b></span><span>JavaScript</span><span><b>/</b></span><span>адаптивная вёрстка</span><span><b>/</b></span><span>анимации</span><span><b>/</b></span><span>Git</span><span><b>/</b></span><span>доступность</span><span><b>/</b></span><span>SEO-основы</span><span><b>/</b></span>
-  </div>
-</div>
-
-<section id="work">
-  <div class="wrap">
-    <div class="proj-head reveal">
-      <div>
-        <div class="sec-label">избранные работы</div>
-        <h2 class="sec-title">Три проекта, три задачи</h2>
-      </div>
-      <p>Каждый сайт — отдельный стиль и тип задачи, чтобы показать диапазон.</p>
-    </div>
-    <div class="cards">
-      <a href="./obzhig/" class="card reveal">
-        <div class="preview pv-obzhig">
-          <div class="bean"></div>
-          <div class="bar"></div>
-          <div class="price">890 ₽ · в корзину</div>
+/* ---- add product modal ---- */
+function AddProduct({onClose,onSave}){
+  const [f,setF]=useState({name:'',cat:'Home',price:'',stock:''});
+  const set=(k,v)=>setF(s=>({...s,[k]:v}));
+  const valid=f.name.trim()&&parseFloat(f.price)>0&&f.stock!=='';
+  const save=()=>{if(!valid)return;onSave({id:'P-'+Math.floor(2200+Math.random()*799),name:f.name.trim(),cat:f.cat,
+    price:parseFloat(f.price),stock:parseInt(f.stock),status:'live',sales:0,spark:sparkData(f.name.length*5)});onClose();};
+  return(
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-h"><h3>Add product</h3><span className="x" onClick={onClose}>×</span></div>
+        <div className="modal-b">
+          <div><label className="lbl">Product name</label><input className="inp" placeholder="e.g. Linen Throw Pillow" value={f.name} onChange={e=>set('name',e.target.value)}/></div>
+          <div><label className="lbl">Category</label><select className="inp" value={f.cat} onChange={e=>set('cat',e.target.value)}>{Object.keys(CATCOLOR).map(c=><option key={c}>{c}</option>)}</select></div>
+          <div className="row2">
+            <div><label className="lbl">Price (USD)</label><input className="inp" type="number" placeholder="0.00" value={f.price} onChange={e=>set('price',e.target.value)}/></div>
+            <div><label className="lbl">Stock</label><input className="inp" type="number" placeholder="0" value={f.stock} onChange={e=>set('stock',e.target.value)}/></div>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="card-type">интернет-магазин</div>
-          <h3>ОБЖИГ</h3>
-          <p>Магазин кофейной обжарки: каталог с фильтрами, рабочая корзина, шкала обжарки у товаров.</p>
-          <div class="card-tags"><span>e-commerce</span><span>JS-корзина</span><span>фильтры</span></div>
-          <div class="card-go">Открыть сайт →</div>
-        </div>
-      </a>
-      <a href="./forma/" class="card reveal">
-        <div class="preview pv-forma">
-          <div class="tag">архитектура · интерьер</div>
-          <div class="rule"></div>
-          <div class="big">ФОРМА</div>
-        </div>
-        <div class="card-body">
-          <div class="card-type">сайт-визитка</div>
-          <h3>ФОРМА</h3>
-          <p>Визитка архитектурного бюро: строгий минимализм, индекс проектов, анимация при скролле.</p>
-          <div class="card-tags"><span>минимализм</span><span>типографика</span><span>анимация</span></div>
-          <div class="card-go">Открыть сайт →</div>
-        </div>
-      </a>
-      <a href="./ritm/" class="card reveal">
-        <div class="preview pv-ritm">
-          <div class="chip"><span class="dot"></span>Чтение · 20 мин</div>
-          <div class="streak">🔥 серия 12 дней</div>
-        </div>
-        <div class="card-body">
-          <div class="card-type">лендинг</div>
-          <h3>РИТМ</h3>
-          <p>Продающая страница приложения привычек: герой, тарифы с переключателем, градиенты и движение.</p>
-          <div class="card-tags"><span>landing</span><span>конверсия</span><span>градиенты</span></div>
-          <div class="card-go">Открыть сайт →</div>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="about" id="about">
-  <div class="wrap">
-    <div class="about-grid">
-      <div class="reveal">
-        <div class="sec-label">чем помогу</div>
-        <h2>Беру задачи <em>под ключ</em> — от макета до рабочего сайта в сети.</h2>
-      </div>
-      <ul class="serv-list reveal">
-        <li><span class="serv-n">01</span><div><b>Лендинги</b><small>Одностраничники для продукта, услуги или мероприятия с акцентом на заявку.</small></div></li>
-        <li><span class="serv-n">02</span><div><b>Интернет-магазины</b><small>Каталог, карточки товаров, корзина — витрина, готовая к продажам.</small></div></li>
-        <li><span class="serv-n">03</span><div><b>Сайты-визитки</b><small>Компактные сайты для бизнеса и специалистов: услуги, портфолио, контакты.</small></div></li>
-        <li><span class="serv-n">04</span><div><b>Вёрстка по макету</b><small>Превращу ваш дизайн из Figma в аккуратную адаптивную страницу.</small></div></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="contact" id="contact">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="sec-label" style="justify-content:center">давайте работать</div>
-      <h2>Есть проект?</h2>
-      <p>Напишите пару строк о задаче — отвечу и прикину, как лучше её решить.</p>
-      <div class="contact-links">
-        <a class="clink" href="mailto:semyon.kaleda@gmail.com">✉ <span class="mono">semyon.kaleda@gmail.com</span></a>
-        <a class="clink" href="https://github.com/J11NXX" target="_blank" rel="noopener">⌥ <span class="mono">github.com/J11NXX</span></a>
-        <a class="clink" href="https://www.linkedin.com/in/semyon-kaleda-b318bb3a2/" target="_blank" rel="noopener">in <span class="mono">LinkedIn</span></a>
-        <a class="clink" href="https://t.me/J11NXX" target="_blank" rel="noopener">✈ <span class="mono">Telegram</span></a>
+        <div className="modal-f"><button className="btn ghost" onClick={onClose}>Cancel</button>
+          <button className="btn primary" style={{opacity:valid?1:.5,pointerEvents:valid?'auto':'none'}} onClick={save}>{I.plus} Save product</button></div>
       </div>
     </div>
-  </div>
-</section>
+  );
+}
 
-<footer>
-  <div class="wrap foot">
-    <div class="nav-name">semyon<b style="color:var(--accent)">.</b>kaleda</div>
-    <small>© 2026 · собрано вручную, без шаблонов</small>
-  </div>
-</footer>
+/* ---- order detail drawer ---- */
+function OrderDrawer({order,products,onClose,onAdvance}){
+  const flow=['paid','processing','shipped','delivered'];
+  const idx=flow.indexOf(order.status);
+  const sample=products.slice(0,order.items);
+  const sub=sample.reduce((s,p)=>s+p.price,0);
+  return(
+    <div className="overlay" onClick={onClose}>
+      <div className="drawer" onClick={e=>e.stopPropagation()}>
+        <div className="modal-h"><h3>Order {order.id}</h3><span className="x" onClick={onClose}>×</span></div>
+        <div className="modal-b" style={{flex:1}}>
+          <div>
+            <div style={{display:'flex',alignItems:'center',marginBottom:10}}>{orderTag(order.status)}<span style={{marginLeft:'auto',fontSize:12,color:'var(--faint)'}}>{order.date} · {order.method}</span></div>
+            {order.status!=='refunded'&&<div className="pipe">{flow.map((s,i)=><div key={s} className={'step'+(i<=idx?' on':'')}/>)}</div>}
+          </div>
+          <div>
+            <label className="lbl">Customer</label>
+            <div className="who" style={{padding:'4px 0'}}><div className="thumb" style={{width:38,height:38,fontSize:13,background:`linear-gradient(135deg,${gradFor(order.customer)[0]},${gradFor(order.customer)[1]})`}}>{order.customer.split(' ').map(w=>w[0]).join('')}</div>
+              <div><b style={{fontSize:14}}>{order.customer}</b><div style={{fontSize:12,color:'var(--faint)'}}>{order.customer.toLowerCase().replace(/[^a-z]/g,'')}@email.com</div></div></div>
+          </div>
+          <div>
+            <label className="lbl">Items ({order.items})</label>
+            {sample.map((p,i)=>{const[g1,g2]=gradFor(p.name);return(
+              <div className="line-item" key={i}><div className="thumb" style={{width:38,height:38,fontSize:12,background:`linear-gradient(135deg,${g1},${g2})`}}>{p.name.split(' ').slice(0,2).map(w=>w[0]).join('')}</div>
+                <div style={{flex:1}}><b style={{fontSize:13.5}}>{p.name}</b><div style={{fontSize:12,color:'var(--faint)'}}>Qty 1 · {p.cat}</div></div>
+                <span className="num" style={{fontWeight:600}}>{money(p.price)}</span></div>);})}
+          </div>
+          <div style={{background:'var(--surface-2)',borderRadius:12,padding:'14px 16px'}}>
+            <div style={{display:'flex',marginBottom:7,fontSize:13,color:'var(--muted)'}}><span>Subtotal</span><span className="num" style={{marginLeft:'auto'}}>{money(sub)}</span></div>
+            <div style={{display:'flex',marginBottom:7,fontSize:13,color:'var(--muted)'}}><span>Shipping</span><span className="num" style={{marginLeft:'auto'}}>$6.00</span></div>
+            <div style={{display:'flex',fontSize:15,fontWeight:600,paddingTop:9,borderTop:'1px solid var(--line)'}}><span>Total</span><span className="num" style={{marginLeft:'auto'}}>{money(order.total)}</span></div>
+          </div>
+        </div>
+        <div className="modal-f">
+          <button className="btn ghost" onClick={onClose}>Close</button>
+          {idx>=0&&idx<3&&<button className="btn primary" onClick={()=>onAdvance(order.id,flow[idx+1])}>Mark as {ORDER_STATUS[flow[idx+1]][2]}</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-<script>
-const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+/* ---- shell ---- */
+const TABS=[
+  {id:'overview',label:'Overview',icon:I.grid,title:'Overview',sub:'How your store is doing'},
+  {id:'orders',label:'Orders',icon:I.bag,title:'Orders',sub:'Manage and fulfill orders',badge:5},
+  {id:'products',label:'Products',icon:I.box,title:'Products',sub:'Your catalog and inventory'},
+  {id:'customers',label:'Customers',icon:I.users,title:'Customers',sub:'Who buys from you'},
+  {id:'settings',label:'Settings',icon:I.gear,title:'Settings',sub:'Store configuration'},
+];
+function App(){
+  const getTab=()=>{const h=window.location.hash.replace('#/','')||'overview';return TABS.find(t=>t.id===h)?h:'overview';};
+  const [tab,setTab]=useState(getTab());
+  const [products,setProducts]=useState(()=>store.get('kasta.products',seedProducts()));
+  const [orders,setOrders]=useState(()=>store.get('kasta.orders',seedOrders()));
+  const [modal,setModal]=useState(false);const [drawer,setDrawer]=useState(null);
+  useEffect(()=>{store.set('kasta.products',products)},[products]);
+  useEffect(()=>{store.set('kasta.orders',orders)},[orders]);
+  useEffect(()=>{const h=()=>setTab(getTab());window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h);},[]);
+  const go=id=>{window.location.hash='#/'+id;setTab(id);};
+  const cur=TABS.find(t=>t.id===tab);
+  return(
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="brand"><div className="logo"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div>
+          <div><b>Kasta</b><span>Store Admin</span></div></div>
+        <div className="nav-label">Manage</div>
+        {TABS.map(t=><button key={t.id} className={'nav-item'+(tab===t.id?' active':'')} onClick={()=>go(t.id)}>{t.icon}{t.label}{t.badge&&tab!==t.id&&<span className="badge">{t.badge}</span>}</button>)}
+        <div className="side-foot">
+          <div className="store-card"><div className="sw"/><div><b>Kasta Home</b><span>kasta.shop</span></div></div>
+          <button className="reset-link" onClick={()=>{if(confirm('Reset products and orders to demo data?')){setProducts(seedProducts());setOrders(seedOrders());}}}>Reset demo data</button>
+        </div>
+      </aside>
+      <div className="main">
+        <header className="topbar">
+          <div><h1>{cur.title}</h1><div className="sub">{cur.sub}</div></div>
+          <div className="search">{I.search}<input placeholder="Search store…"/></div>
+          <button className="icon-btn">{I.bell}<span className="dot"/></button>
+          <div className="avatar">SK</div>
+        </header>
+        <div className="scroll">
+          {tab==='overview'&&<Overview products={products} orders={orders}/>}
+          {tab==='orders'&&<Orders orders={orders} onOpen={setDrawer}/>}
+          {tab==='products'&&<Products products={products} onAdd={()=>setModal(true)}
+            onDelete={id=>setProducts(p=>p.filter(x=>x.id!==id))}
+            onRestock={id=>setProducts(p=>p.map(x=>x.id===id?{...x,stock:x.stock+25}:x))}/>}
+          {tab==='customers'&&<Customers orders={orders}/>}
+          {tab==='settings'&&<Settings/>}
+        </div>
+      </div>
+      {modal&&<AddProduct onClose={()=>setModal(false)} onSave={p=>setProducts(x=>[p,...x])}/>}
+      {drawer&&<OrderDrawer order={drawer} products={products} onClose={()=>setDrawer(null)}
+        onAdvance={(id,st)=>{setOrders(o=>o.map(x=>x.id===id?{...x,status:st}:x));setDrawer(d=>({...d,status:st}));}}/>}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
